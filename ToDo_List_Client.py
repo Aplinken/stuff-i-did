@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
+import pickle
 
 def add(): #adds tasks
 	task = ent_task.get()
-	if task == '':
+	if task == '' or task.isspace() is True:
 		messagebox.showwarning(title='Error',message='Entry cannot be 0 characters long!')
 	else:
 		lstbox_list.insert(tk.END, task)
@@ -11,16 +12,23 @@ def add(): #adds tasks
 
 def delete(): #deletes selected task
 	try:
-		task = lstbox_list.curselection()
+		task = lstbox_list.curselection()[0]
 		lstbox_list.delete(task)
 	except:
 		messagebox.showwarning(title='Error',message='You must select the item you want to remove!')
 	
-def save(): #save feature implementetion added to 'to-do list' XD
-	pass
+def save(): #saves the listbox onto todo_save.dat
+	tasks = lstbox_list.get(0, lstbox_list.size())
+	pickle.dump(tasks, open('todo_save.dat','wb'))
 
-def load(): #load feature implementetion added to 'to-do list' XD
-	pass
+def load(): #loads from any previous save(todo_save.dat)
+	try:
+		tasks = pickle.load(open('todo_save.dat','rb'))
+		lstbox_list.delete(0, tk.END)
+		for task in tasks:
+			lstbox_list.insert(tk.END, task)
+	except:
+		messagebox.showwarning(title='Error',message='You need to save before loading!')
 
 window = tk.Tk() #create the window instance
 window.title("To-Do List Creator By @aplinken") 
